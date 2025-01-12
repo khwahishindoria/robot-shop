@@ -1,0 +1,166 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: fluentd-es-config-v0.2.0
+  namespace: logging
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+data:
+  system.conf: |-
+    <system>
+      root_dir /tmp/fluentd-buffers/
+    </system>
+
+  containers.input.conf: |-
+    # Configuration for collecting logs from Docker containers
+    <source>
+      @id fluentd-containers.log
+      @type tail
+      path /var/log/containers/*.log
+      pos_file /var/log/es-containers.log.pos
+      tag raw.kubernetes.*
+      read_from_head true
+      <parse>
+        @type multi_format
+        <pattern>
+          format json
+          time_key time
+          time_format %Y-%m-%dT%H:%M:%S.%NZ
+        </pattern>
+        <pattern>
+          format /^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$/
+          time_format %Y-%m-%dT%H:%M:%S.%N%:z
+        </pattern>
+      </parse>
+    </source>
+    <source>
+      @id grafana-logs
+      @type tail
+      path /var/log/containers/*grafana*.log
+      pos_file /var/log/es-grafana.log.pos
+      tag grafana.log
+      read_from_head true
+      <parse>
+        @type json
+      </parse>
+    </source>
+
+  system.input.conf: |-
+    # Configuration for collecting system logs
+    <source>
+      @id minion
+      @type tail
+      format /^(?<time>[^ ]* [^ ,]*)[^\[]*\[[^\]]*\]\[(?<severity>[^ \]]*) *\] (?<message>.*)$/
+      time_format %Y-%m-%d %H:%M:%S
+      path /var/log/salt/minion
+      pos_file /var/log/salt.pos
+      tag salt
+    </source>
+
+    <source>
+      @id docker.log
+      @type tail
+      format /^time="(?<time>[^)]*)" level=(?<severity>[^ ]*) msg="(?<message>[^"]*)"( err="(?<error>[^"]*)")?( statusCode=($<status_code>\d+))?/
+      path /var/log/docker.log
+      pos_file /var/log/es-docker.log.pos
+      tag docker
+    </source>
+
+    # Add more system logs sources if needed...
+
+  forward.input.conf: |-
+    # Configuration for accepting log messages over TCP
+    <source>
+      @id forward
+      @type forward
+    </source>
+
+  monitoring.conf: |-
+    # Prometheus Exporter Plugin
+    # Input plugin that exports metrics
+    <source>
+      @id prometheus
+      @type prometheus
+    </source>
+
+    <source>
+      @id monitor_agent
+      @type monitor_agent
+    </source>
+
+    # Input plugin that collects metrics from MonitorAgent
+    <source>
+      @id prometheus_monitor
+      @type prometheus_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+
+    # Input plugin that collects metrics for output plugin
+    <source>
+      @id prometheus_output_monitor
+      @type prometheus_output_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+
+    # Input plugin that collects metrics for in_tail plugin
+    <source>
+      @id prometheus_tail_monitor
+      @type prometheus_tail_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+
+  output.conf: |-
+    # Configuration for forwarding logs to Elasticsearch
+    <match **>
+      @id elasticsearch
+      @type elasticsearch
+      @log_level info
+      type_name _doc
+      include_tag_key true
+      host elasticsearch-logging
+      port 9200
+      logstash_format true
+      <buffer>
+        @type file
+        path /var/log/fluentd-buffers/kubernetes.system.buffer
+        flush_mode interval
+        retry_type exponential_backoff
+        flush_thread_count 2
+        flush_interval 5s
+        retry_forever
+        retry_max_interval 30
+        chunk_limit_size 2M
+        queue_limit_length 8
+        overflow_action block
+      </buffer>
+    </match>
+    <match grafana.log>
+      @type elasticsearch
+      @id grafana-elasticsearch
+      @log_level info
+      type_name _doc
+      include_tag_key true
+      host elasticsearch-logging
+      port 9200
+      logstash_format true
+      index_name grafana-${Time.at(time).utc.strftime('%Y.%m.%d')}
+      <buffer>
+        @type file
+        path /var/log/fluentd-buffers/grafana.buffer
+        flush_mode interval
+        retry_type exponential_backoff
+        flush_thread_count 2
+        flush_interval 5s
+        retry_forever
+        retry_max_interval 30
+        chunk_limit_size 2M
+        queue_limit_length 8
+        overflow_action block
+      </buffer>
+    </match>
