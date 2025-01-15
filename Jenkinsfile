@@ -5,19 +5,13 @@ pipeline {
             steps {
                 echo 'pulling...'
                 sh '''
+                if [ -d /opt/jenkins/ ]
+                then
                 cd /opt/jenkins/
+                git pull
+                else
                 git clone https://github.com/khwahishindoria/robot-shop.git
-                '''
-            }
-        }
-        stage('Installing Helm') {
-            steps {
-                echo 'Installing Helm...'
-                 sh '''
-                 cd ~
-                 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-                 chmod 700 get_helm.sh
-                 ./get_helm.sh
+                fi
                 '''
             }
         }
