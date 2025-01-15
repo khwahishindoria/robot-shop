@@ -7,7 +7,7 @@ pipeline {
                 sh '''
                 if [ -d /opt/jenkins/ ]
                 then
-                cd /opt/jenkins/
+                cd /opt/jenkins/robot-shop/
                 git pull
                 else
                 git clone https://github.com/khwahishindoria/robot-shop.git
