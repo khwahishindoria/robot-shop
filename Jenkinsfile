@@ -1,5 +1,5 @@
 pipeline {
-    agent master-01
+    agent { label 'kubernetes' }
     stages {
         stage('pulling robot-shopt') {
             steps {
