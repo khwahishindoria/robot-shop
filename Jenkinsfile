@@ -6,7 +6,7 @@ pipeline {
                 echo 'pulling...'
                 sh '''
                 cd /opt/jenkins/
-                git pull https://github.com/khwahishindoria/robot-shop.git
+                git clone https://github.com/khwahishindoria/robot-shop.git
                 '''
             }
         }
