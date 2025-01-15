@@ -20,7 +20,8 @@ pipeline {
                 echo 'Deploying robot-shop...'
                  sh '''
                  var=`kubectl get ns | grep robot-shop | wc -l`
-                 if [ $var == 1 ] then
+                 if [ $var == 1 ] 
+                 then
                  echo "service already deployed"
                  else
                  cd /opt/jenkins/robot-shop/K8s/helm
@@ -35,7 +36,8 @@ pipeline {
                 echo 'Deploying EFK Stack for monitoring'
                  sh '''
                  var2=`kubectl get ns | grep robot-shop | wc -l`
-                 if [ $var == 1 ] then
+                 if [ $var == 1 ]
+                 then
                  echo "Monitoring already deployed" 
                  else
                  cd /opt/jenkins/robot-shop/EFK
