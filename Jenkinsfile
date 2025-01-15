@@ -31,5 +31,14 @@ pipeline {
                  kubectl apply -f /opt/jenkins/robot-shop/pv.yml                 
                 '''            }
         }
+        stage('Deploying EFK Stack for monitoring') {
+            steps {
+                echo 'Deploying EFK Stack for monitoring'
+                 sh '''
+                 cd /opt/jenkins/robot-shop/EFK
+                 kubectl create ns logging
+                 kubectl apply -f .               
+                '''            }
+        }
     }
 }
