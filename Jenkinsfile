@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent master-01
     stages {
         stage('pulling robot-shopt') {
             steps {
