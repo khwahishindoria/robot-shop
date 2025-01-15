@@ -21,11 +21,15 @@ pipeline {
                 '''
             }
         }
-        stage('Deploy') {
+        stage('Deploying robot-shop') {
             steps {
-                echo 'Deploying...'
-                // Add your deployment steps here
-            }
+                echo 'Deploying robot-shop...'
+                 sh '''
+                 cd /opt/jenkins/robot-shop/K8s/helm
+                 kubectl create ns robot-shop
+                 helm install robot-shop --namespace robot-shop /opt/jenkins/robot-shop/K8s/helm/
+                 kubectl apply -f /opt/jenkins/robot-shop/pv.yml                 
+                '''            }
         }
     }
 }
