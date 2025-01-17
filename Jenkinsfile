@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'kubernetes' }
+    agent any
     stages {
         stage('pulling robot-shopt') {
             steps {
@@ -10,6 +10,8 @@ pipeline {
                 cd /opt/jenkins/robot-shop/
                 git pull
                 else
+                mkdir -p /opt/jenkins/
+                chmod 755 /opt/jenkins/
                 git clone https://github.com/khwahishindoria/robot-shop.git
                 fi
                 '''
