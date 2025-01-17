@@ -35,6 +35,7 @@ pipeline {
                  kubectl create ns logging
                  kubectl apply -f Namespace.yml
                  kubectl apply -f .
+                 kubectl apply -f /tmp/jenkins/robot-shop/pv.yml
                 '''            }
         }
     }
