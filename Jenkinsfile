@@ -23,7 +23,7 @@ pipeline {
                  sh '''
                  cd /tmp/jenkins/robot-shop/K8s/helm
                  kubectl create ns robot-shop
-                 helm install robot-shop --namespace robot-shop /opt/jenkins/robot-shop/K8s/helm/
+                 helm install robot-shop --namespace robot-shop /tmp/jenkins/robot-shop/K8s/helm/
                  kubectl apply -f /tmp/jenkins/robot-shop/pv.yml
                 '''            }
         }
