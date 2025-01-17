@@ -10,8 +10,8 @@ pipeline {
                 cd /opt/jenkins/robot-shop/
                 git pull
                 else
-                mkdir -p /opt/jenkins/
-                chmod 755 /opt/jenkins/
+                sudo mkdir -p /opt/jenkins/
+                sudo chmod 755 /opt/jenkins/
                 sudo chown jenkins:jenkins /opt/jenkins/
                 cd /opt/jenkins/
                 git clone https://github.com/khwahishindoria/robot-shop.git
