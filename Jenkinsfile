@@ -5,15 +5,13 @@ pipeline {
             steps {
                 echo 'pulling...'
                 sh '''
-                if [ -d /opt/jenkins/robot-shop/ ]
+                if [ -d /tmp/jenkins/robot-shop/ ]
                 then
-                cd /opt/jenkins/robot-shop/
+                cd /tmp/jenkins/robot-shop/
                 git pull
                 else
-                sudo mkdir -p /opt/jenkins/
-                sudo chmod 755 /opt/jenkins/
-                sudo chown jenkins:jenkins /opt/jenkins/
-                cd /opt/jenkins/
+                sudo mkdir -p /tmp/jenkins/
+                cd /tmp/jenkins/
                 git clone https://github.com/khwahishindoria/robot-shop.git
                 fi
                 '''
@@ -28,10 +26,10 @@ pipeline {
                  then
                  echo "service already deployed"
                  else
-                 cd /opt/jenkins/robot-shop/K8s/helm
+                 cd /tmp/jenkins/robot-shop/K8s/helm
                  kubectl create ns robot-shop
                  helm install robot-shop --namespace robot-shop /opt/jenkins/robot-shop/K8s/helm/
-                 kubectl apply -f /opt/jenkins/robot-shop/pv.yml
+                 kubectl apply -f /tmp/jenkins/robot-shop/pv.yml
                  fi
                 '''            }
         }
@@ -44,7 +42,7 @@ pipeline {
                  then
                  echo "Monitoring already deployed" 
                  else
-                 cd /opt/jenkins/robot-shop/EFK
+                 cd /tmp/jenkins/robot-shop/EFK
                  kubectl create ns logging
                  kubectl apply -f .
                  fi
