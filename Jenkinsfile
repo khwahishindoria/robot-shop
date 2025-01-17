@@ -5,7 +5,7 @@ pipeline {
             steps {
                 echo 'pulling...'
                 sh '''
-                if [ -d /opt/jenkins/ ]
+                if [ -d /opt/jenkins/robot-shop/ ]
                 then
                 cd /opt/jenkins/robot-shop/
                 git pull
