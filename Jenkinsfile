@@ -10,7 +10,7 @@ pipeline {
                 cd /tmp/jenkins/robot-shop/
                 git pull
                 else
-                sudo mkdir -p /tmp/jenkins/
+                mkdir -p /tmp/jenkins/
                 cd /tmp/jenkins/
                 git clone https://github.com/khwahishindoria/robot-shop.git
                 fi
