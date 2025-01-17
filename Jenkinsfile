@@ -29,12 +29,11 @@ pipeline {
         }
         stage('Deploying EFK Stack for monitoring') {
             steps {
-                echo 'Deploying EFK Stack for monitoring'
+                 echo 'Deploying EFK Stack for monitoring'
                  sh '''
-                 echo "Monitoring already deployed" 
-                 else
                  cd /tmp/jenkins/robot-shop/EFK
                  kubectl create ns logging
+                 kubectl apply -f Namespace.yml
                  kubectl apply -f .
                 '''            }
         }
